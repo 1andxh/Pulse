@@ -1,6 +1,17 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from src.db.session import engine
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Starting Pulse...")
+    yield
+    print("Shutting down")
+    await engine.dispose()
+
+
+app = FastAPI(title="Pulse Monitor", lifespan=lifespan)
 
 
 @app.get("/")
