@@ -1,5 +1,10 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import ForeignKey, DateTime, String, Boolean
+from sqlalchemy import (
+    String,
+    Boolean,
+    CheckConstraint,
+    UniqueConstraint,
+)
 from src.db.base import Base
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
@@ -12,6 +17,13 @@ class Monitor(Base):
     # specific target to watch
 
     __tablename__ = "monitors"
+
+    __table_args__ = (
+        UniqueConstraint("url", name="uq_monitor_url"),
+        CheckConstraint(
+            "url LIKE 'http://%' OR url LIKE 'https://%'", name="check_url_protocol"
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
