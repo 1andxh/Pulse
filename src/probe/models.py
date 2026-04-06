@@ -1,5 +1,5 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import ForeignKey, DateTime, String, func, Boolean
+from sqlalchemy import ForeignKey, DateTime, String, func, Boolean, Index
 from src.db.base import Base
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
@@ -12,6 +12,8 @@ class Probe(Base):
     # single recorded ping event
 
     __tablename__ = "probes"
+
+    __table_args__ = (Index("ix_probe_monitor_timestamp", "monitor_id", "timestamp"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     monitor_id: Mapped[uuid.UUID] = mapped_column(
