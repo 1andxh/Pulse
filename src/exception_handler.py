@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
-from src.execptions import DomainError
+from src.exceptions import DomainError
 
 
 async def writewinged_exception_handler(request: Request, exc: DomainError):
@@ -20,7 +20,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 async def general_exception_handler(request: Request, exc: Exception):
-    # Log the actual 'exc' here so you can debug it!
     return JSONResponse(
         status_code=500,
         content={
