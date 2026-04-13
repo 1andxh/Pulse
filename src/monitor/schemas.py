@@ -12,7 +12,7 @@ def normalize_url(v: str | None) -> str | None:
     v = v.strip()
 
     parsed = urlparse(v)
-    parsed.netloc.lower()
+
     if parsed.scheme != "https":
         raise ValueError("URL must use https")
 
