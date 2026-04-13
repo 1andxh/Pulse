@@ -5,6 +5,7 @@ import uuid
 from .models import Monitor
 import schemas
 from sqlalchemy import select
+from ..exceptions import DuplicateMonitorError
 
 
 class MonitorService:
@@ -18,11 +19,12 @@ class MonitorService:
             select(Monitor).where(Monitor.url == normalized_url)
         )
         if existing.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Monitor already exists"
-            )
+            raise DuplicateMonitorError
 
-        new_monitor = Monitor(**data.model_dump())
+        payload = data.model_dump()
+        payload["url"] = normalized_url
+
+        new_monitor = Monitor(**payload)
 
         self.session.add(new_monitor)
         await self.session.commit()
