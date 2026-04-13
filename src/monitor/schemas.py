@@ -2,7 +2,7 @@ from typing import Any
 from typing_extensions import Self
 from pydantic import BaseModel, HttpUrl, field_validator, ConfigDict, Field
 import uuid
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 
 def url_validator(v: str | None) -> str | None:
@@ -15,10 +15,25 @@ def url_validator(v: str | None) -> str | None:
     if parsed.scheme != "https":
         raise ValueError("URL must use https")
 
-    if v.endswith("/"):
-        v = v[:-1]
+    if not parsed.netloc:
+        raise ValueError("Invalid URL: Missing domain")
 
-    return v
+    path = parsed.path
+    if path in ["/", ""]:
+        path = ""
+
+    normalized_url = urlunparse(
+        (
+            parsed.scheme.lower(),
+            parsed.netloc.lower(),
+            path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment,
+        )
+    )
+
+    return normalized_url
 
 
 class MonitorCreate(BaseModel):
