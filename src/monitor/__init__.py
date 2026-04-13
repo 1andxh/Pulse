@@ -1,3 +1,3 @@
-from .models import Monitor, Probe
+from .models import Monitor
 
-__all__ = ["Monitor", "Probe"]
+__all__ = ["Monitor"]
