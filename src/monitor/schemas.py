@@ -5,13 +5,14 @@ import uuid
 from urllib.parse import urlparse, urlunparse
 
 
-def url_validator(v: str | None) -> str | None:
+def normalize_url(v: str | None) -> str | None:
     if v is None:
         return v
 
-    v = v.strip().lower()
+    v = v.strip()
 
     parsed = urlparse(v)
+    parsed.netloc.lower()
     if parsed.scheme != "https":
         raise ValueError("URL must use https")
 
@@ -44,7 +45,7 @@ class MonitorCreate(BaseModel):
     @field_validator("url")
     @classmethod
     def validate_url(cls, v: str):
-        return url_validator(v)
+        return normalize_url(v)
 
 
 class MonitorUpdate(BaseModel):
@@ -56,7 +57,7 @@ class MonitorUpdate(BaseModel):
     @field_validator("url")
     @classmethod
     def validate_url(cls, v: str):
-        return url_validator(v)
+        return normalize_url(v)
 
 
 class MonitorRead(BaseModel):
