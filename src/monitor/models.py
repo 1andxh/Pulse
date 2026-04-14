@@ -4,6 +4,8 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     UniqueConstraint,
+    func,
+    DateTime,
 )
 from src.db.base import Base
 import uuid
@@ -32,7 +34,10 @@ class Monitor(Base):
     url: Mapped[str] = mapped_column(String(1024), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     check_interval: Mapped[int] = mapped_column(default=30)
-
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
     # relationships
     probes: Mapped[list["Probe"]] = relationship(
         "Probe", back_populates="monitor", cascade="all, delete-orphan"
