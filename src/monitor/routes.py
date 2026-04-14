@@ -23,4 +23,4 @@ async def create_monitor_route(payload: MonitorCreate, service: _service):
 
 @monitor_router.get("/{monitor_id}", response_model=MonitorRead)
 async def get_monitor(id: uuid.UUID, service: _service):
-    return await service.get_monitor(id)
+    return await service.get_monitor_by_id(id)
