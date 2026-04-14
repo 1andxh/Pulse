@@ -3,6 +3,7 @@ from typing_extensions import Self
 from pydantic import BaseModel, HttpUrl, field_validator, ConfigDict, Field
 import uuid
 from urllib.parse import urlparse, urlunparse
+from datetime import datetime
 
 
 def normalize_url(v: str | None) -> str | None:
@@ -66,5 +67,6 @@ class MonitorRead(BaseModel):
     url: str
     is_active: bool
     check_interval: int
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
