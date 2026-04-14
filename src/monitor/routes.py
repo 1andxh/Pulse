@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends
 from typing import Annotated
 from .schemas import MonitorRead, MonitorCreate
 from .services import MonitorService
-from .dependecy import get_monitor_service
+from .dependency import get_monitor_service
 from src.db.session import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
@@ -17,7 +17,8 @@ monitor_router = APIRouter()
     "/", response_model=MonitorRead, status_code=status.HTTP_201_CREATED
 )
 async def create_monitor_route(payload: MonitorCreate, service: _service):
-    return await service.create_monitor(payload)
+    monitor = await service.create_monitor(payload)
+    return monitor
 
 
 @monitor_router.get("/{monitor_id}", response_model=MonitorRead)
