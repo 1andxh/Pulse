@@ -1,0 +1,1 @@
+Pulse is a lightweight, reliable uptime monitor built with FastAPI and PostgreSQL. It handles the messy work of URL normalization and background pings so you can focus on your site’s health, not your database's integrity. Simple, robust, and built to modern SQLAlchemy 2.0 standards.
