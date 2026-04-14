@@ -42,6 +42,19 @@ class MonitorService:
             raise
         return monitor
 
+    async def update_monitor(
+        self, id: uuid.UUID, data: schemas.MonitorUpdate
+    ) -> Monitor:
+        monitor = await self.get_monitor_by_id(id)
+
+        update_data = data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(monitor, key, value)
+
+        await self.session.commit()
+        await self.session.refresh(monitor)
+        return monitor
+
     async def delete_monitor(self, monitor_id: uuid.UUID) -> None:
         monitor = await self.get_monitor_by_id(monitor_id)
         await self.session.delete(monitor)
