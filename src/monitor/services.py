@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import uuid
 from .models import Monitor
 import schemas
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from ..exceptions import DuplicateMonitorError
 
 
@@ -29,3 +29,20 @@ class MonitorService:
         self.session.add(new_monitor)
         await self.session.commit()
         await self.session.refresh(new_monitor)
+
+    async def get_all_monitors(self) -> list[Monitor]:
+        stmt = select(Monitor).order_by(desc(Monitor.created_at))
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
+    async def get_monitor_by_id(self, id: uuid.UUID) -> Monitor:
+        statement = await self.session.execute(select(Monitor).where(Monitor.id == id))
+        monitor = statement.scalar_one_or_none()
+        if monitor is None:
+            raise
+        return monitor
+
+    async def delete_monitor(self, monitor_id: uuid.UUID) -> None:
+        monitor = await self.get_monitor_by_id(monitor_id)
+        await self.session.delete(monitor)
+        await self.session.commit()
