@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import (
     String,
@@ -12,7 +14,10 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 
 from datetime import datetime, timezone
-from src.probe.models import Probe
+
+
+if TYPE_CHECKING:
+    from src.probe.models import Probe
 
 
 class Monitor(Base):
