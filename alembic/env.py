@@ -9,6 +9,8 @@ from alembic import context
 
 from src.config import settings
 from src.db.base import Base
+from src.monitor import Monitor
+from src.probe import Probe
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
