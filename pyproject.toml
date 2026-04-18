@@ -8,5 +8,6 @@ dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "fastapi[standard]>=0.135.2",
+    "sentry-sdk>=2.56.0",
     "sqlalchemy>=2.0.48",
 ]
