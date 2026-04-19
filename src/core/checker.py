@@ -3,6 +3,7 @@ import time
 import httpx
 from src.monitor import Monitor
 from src.probe import Probe
+import asyncio
 
 
 @dataclass
@@ -12,11 +13,11 @@ class CheckResult:
     error_message: str | None
 
 
-async def check_monitor(monitor: Monitor, client: httpx.AsyncClient):
+async def check_monitor(monitor: Monitor):
 
     start = time.perf_counter()
     try:
-        async with client:
+        async with httpx.AsyncClient() as client:
             response = await client.get(monitor.url, timeout=5.0)
 
             latency_ms = (time.perf_counter() - start) * 1000
@@ -32,3 +33,5 @@ async def check_monitor(monitor: Monitor, client: httpx.AsyncClient):
         latency_ms = (time.perf_counter() - start) * 1000
 
         return CheckResult(is_up=False, latency_ms=latency_ms, error_message=str(e))
+
+    await asyncio.sleep(10)
