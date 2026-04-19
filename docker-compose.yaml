@@ -6,11 +6,12 @@ services:
     env_file:
       - .env
     ports:
-      - "8001:8000"
+      - "8000:8000"
     depends_on:
       - db
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      SENTRY_DSN: ${SENTRY_DSN}
     volumes:
       - .:/app
       - /app/.venv
