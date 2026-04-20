@@ -1,32 +1,43 @@
 from src.db.session import AsyncSessionLocal
 from src.monitor.services import MonitorService
-from .checker import check_monitor
+from .checker import check_monitor, CheckResult
 import asyncio
 from src.probe import Probe
+import httpx
 
 
 async def worker():
-    while True:
-        async with AsyncSessionLocal() as session:
-            service = MonitorService(session)
-            monitors = await service.get_all_monitors()
+    async with httpx.AsyncClient() as client:
 
-            for monitor in monitors:
-                tasks = [check_monitor(monitor.url) for m in monitors]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+        while True:
+            async with AsyncSessionLocal() as session:
 
-            for monitor, result in zip(monitors, results):
-                if result isinstance(Exception):
-                    result
+                service = MonitorService(session)
+                monitors = await service.get_all_monitors()
 
-                probe = Probe(
-                    monitor_id=monitor.id,
-                    latency_ms=result.latency_ms,
-                    is_up=result.is_up,
-                    error_message=result.error_message
-                )
+                if not monitors:
+                    await asyncio.sleep(10)
 
-                session.add(probe)
+                tasks = [check_monitor(monitor, client) for monitor in monitors]
 
-            await session.commit()
-        await asyncio.sleep(10)
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+
+                for monitor, result in zip(monitors, results):
+                    if isinstance(result, Exception):
+                        normalized = CheckResult(
+                            is_up=False, latency_ms=None, error_message=str(result)
+                        )
+                    else:
+                        normalized = result
+
+                    probe = Probe(
+                        monitor_id=monitor.id,
+                        latency_ms=normalized.latency_ms,
+                        is_up=normalized.is_up,
+                        error_message=normalized.error_message,
+                    )
+
+                    session.add(probe)
+
+                await session.commit()
+            await asyncio.sleep(10)
