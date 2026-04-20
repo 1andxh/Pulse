@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from src.exceptions import DomainError
 
 
-async def writewinged_exception_handler(request: Request, exc: DomainError):
+async def pulse_exception_handler(request: Request, exc: DomainError):
     return JSONResponse(
         status_code=exc.status_code,
         content={"error": exc.__class__.__name__, "message": exc.message},
