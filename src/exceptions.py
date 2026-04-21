@@ -11,3 +11,8 @@ class DomainError(Exception):
 class DuplicateMonitorError(DomainError):
     def __init__(self) -> None:
         super().__init__("Monitor already exists", status_code=status.HTTP_409_CONFLICT)
+
+
+class MonitorNotFoundError(DomainError):
+    def __init__(self) -> None:
+        super().__init__("Monitor not found", status_code=status.HTTP_404_NOT_FOUND)
