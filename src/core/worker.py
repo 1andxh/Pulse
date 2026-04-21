@@ -10,43 +10,46 @@ from .checker import is_monitor_due
 
 async def worker(client: httpx.AsyncClient):
     async with httpx.AsyncClient() as client:
+        try:
+            while True:
 
-        while True:
+                now = datetime.now(timezone.utc)
 
-            now = datetime.now(timezone.utc)
+                async with AsyncSessionLocal() as session:
 
-            async with AsyncSessionLocal() as session:
+                    service = MonitorService(session)
+                    monitors = await service.get_all_monitors()
 
-                service = MonitorService(session)
-                monitors = await service.get_all_monitors()
+                    due_monitors = [
+                        monitor for monitor in monitors if is_monitor_due(monitor, now)
+                    ]
+                    if not due_monitors:
+                        await asyncio.sleep(3)
+                        continue
 
-                due_monitors = [
-                    monitor for monitor in monitors if is_monitor_due(monitor, now)
-                ]
-                if not due_monitors:
-                    await asyncio.sleep(3)
-                    continue
+                    tasks = [check_monitor(monitor, client) for monitor in monitors]
 
-                tasks = [check_monitor(monitor, client) for monitor in monitors]
+                    results = await asyncio.gather(*tasks, return_exceptions=True)
 
-                results = await asyncio.gather(*tasks, return_exceptions=True)
+                    for monitor, result in zip(monitors, results):
+                        if isinstance(result, Exception):
+                            normalized = CheckResult(
+                                is_up=False, latency_ms=None, error_message=str(result)
+                            )
+                        else:
+                            normalized = result
 
-                for monitor, result in zip(monitors, results):
-                    if isinstance(result, Exception):
-                        normalized = CheckResult(
-                            is_up=False, latency_ms=None, error_message=str(result)
+                        probe = Probe(
+                            monitor_id=monitor.id,
+                            latency_ms=normalized.latency_ms,
+                            is_up=normalized.is_up,
+                            error_message=normalized.error_message,
                         )
-                    else:
-                        normalized = result
+                        monitor.last_checked_at = now
+                        session.add(probe)
 
-                    probe = Probe(
-                        monitor_id=monitor.id,
-                        latency_ms=normalized.latency_ms,
-                        is_up=normalized.is_up,
-                        error_message=normalized.error_message,
-                    )
-                    monitor.last_checked_at = now
-                    session.add(probe)
-
-                await session.commit()
-            await asyncio.sleep(10)
+                    await session.commit()
+                await asyncio.sleep(10)
+        except asyncio.CancelledError:
+            print("worker shutting down...")
+            raise
