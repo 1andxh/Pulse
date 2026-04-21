@@ -4,6 +4,8 @@ from .checker import check_monitor, CheckResult
 import asyncio
 from src.probe import Probe
 import httpx
+from datetime import time, datetime, timezone
+from sqlalchemy import select
 
 
 async def worker():
@@ -11,6 +13,8 @@ async def worker():
 
         while True:
             async with AsyncSessionLocal() as session:
+
+                # now = datetime.now(timezone.utc)
 
                 service = MonitorService(session)
                 monitors = await service.get_all_monitors()
@@ -23,6 +27,7 @@ async def worker():
                 results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 for monitor, result in zip(monitors, results):
+
                     if isinstance(result, Exception):
                         normalized = CheckResult(
                             is_up=False, latency_ms=None, error_message=str(result)
