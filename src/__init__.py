@@ -9,13 +9,28 @@ from .exception_handler import (
     PulseError,
     RequestValidationError,
 )
+from src.core.worker import worker
+import httpx
+import asyncio
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting Pulse...")
-    yield
-    print("Shutting down")
+    client = httpx.AsyncClient()
+    app.state.http_client = client
+
+    task = asyncio.create_task(worker(client))
+
+    try:
+        yield
+    finally:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+    await client.aclose()
     await engine.dispose()
 
 

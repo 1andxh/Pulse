@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from .checker import is_monitor_due
 
 
-async def worker():
+async def worker(client: httpx.AsyncClient):
     async with httpx.AsyncClient() as client:
 
         while True:
@@ -32,7 +32,6 @@ async def worker():
                 results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 for monitor, result in zip(monitors, results):
-
                     if isinstance(result, Exception):
                         normalized = CheckResult(
                             is_up=False, latency_ms=None, error_message=str(result)
