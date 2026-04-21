@@ -4,13 +4,14 @@ import httpx
 from src.monitor import Monitor
 from src.probe import Probe
 import asyncio
+from datetime import datetime
 
 
 @dataclass
 class CheckResult:
     is_up: bool
     latency_ms: float | None
-    error_message: str | None
+    error_message: str | None = None
 
 
 async def check_monitor(monitor: Monitor, client: httpx.AsyncClient):
@@ -26,3 +27,12 @@ async def check_monitor(monitor: Monitor, client: httpx.AsyncClient):
         latency_ms = (time.perf_counter() - start) * 1000
 
         return CheckResult(is_up=False, latency_ms=latency_ms, error_message=str(e))
+
+
+def is_monitor_due(monitor: Monitor, now: datetime) -> bool:
+    if not monitor.is_active:
+        return False
+    if monitor.last_checked_at is None:
+        return True
+    elapsed_time = (now - monitor.last_checked_at).total_seconds()
+    return elapsed_time >= monitor.check_interval

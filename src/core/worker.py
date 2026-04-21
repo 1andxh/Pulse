@@ -4,23 +4,28 @@ from .checker import check_monitor, CheckResult
 import asyncio
 from src.probe import Probe
 import httpx
-from datetime import time, datetime, timezone
-from sqlalchemy import select
+from datetime import datetime, timezone
+from .checker import is_monitor_due
 
 
 async def worker():
     async with httpx.AsyncClient() as client:
 
         while True:
-            async with AsyncSessionLocal() as session:
 
-                # now = datetime.now(timezone.utc)
+            now = datetime.now(timezone.utc)
+
+            async with AsyncSessionLocal() as session:
 
                 service = MonitorService(session)
                 monitors = await service.get_all_monitors()
 
-                if not monitors:
-                    await asyncio.sleep(10)
+                due_monitors = [
+                    monitor for monitor in monitors if is_monitor_due(monitor, now)
+                ]
+                if not due_monitors:
+                    await asyncio.sleep(3)
+                    continue
 
                 tasks = [check_monitor(monitor, client) for monitor in monitors]
 
@@ -41,7 +46,7 @@ async def worker():
                         is_up=normalized.is_up,
                         error_message=normalized.error_message,
                     )
-
+                    monitor.last_checked_at = now
                     session.add(probe)
 
                 await session.commit()
