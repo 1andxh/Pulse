@@ -2,21 +2,25 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
-from src.exceptions import DomainError
+from src.exceptions import PulseError
 
 
-async def writewinged_exception_handler(request: Request, exc: DomainError):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"error": exc.__class__.__name__, "message": exc.message},
-    )
+async def pulse_exception_handler(request: Request, exc: Exception):
+    if isinstance(exc, PulseError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": exc.__class__.__name__, "message": exc.message},
+        )
+    return await general_exception_handler(request, exc)
 
 
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"error": "ValidationError", "message": exc.errors()},
-    )
+async def validation_exception_handler(request: Request, exc: Exception):
+    if isinstance(exc, RequestValidationError):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={"error": "ValidationError", "message": exc.errors()},
+        )
+    return await general_exception_handler(request, exc)
 
 
 async def general_exception_handler(request: Request, exc: Exception):

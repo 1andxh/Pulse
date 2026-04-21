@@ -5,7 +5,7 @@ import uuid
 from .models import Monitor
 import schemas
 from sqlalchemy import select, desc
-from ..exceptions import DuplicateMonitorError
+from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
 
 
 class MonitorService:
@@ -39,7 +39,7 @@ class MonitorService:
         statement = await self.session.execute(select(Monitor).where(Monitor.id == id))
         monitor = statement.scalar_one_or_none()
         if monitor is None:
-            raise
+            raise MonitorNotFoundError
         return monitor
 
     async def update_monitor(
