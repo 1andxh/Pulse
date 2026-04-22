@@ -53,3 +53,7 @@ async def worker(client: httpx.AsyncClient):
         except asyncio.CancelledError:
             print("worker shutting down...")
             raise
+
+        except Exception as e:
+            print(f"worker crashed: {e}")
+            await asyncio.sleep(5)
