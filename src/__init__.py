@@ -30,8 +30,8 @@ async def lifespan(app: FastAPI):
         except asyncio.CancelledError:
             pass
 
-    await client.aclose()
-    await engine.dispose()
+        await client.aclose()
+        await engine.dispose()
 
 
 app = FastAPI(title="Pulse Monitor", lifespan=lifespan)
