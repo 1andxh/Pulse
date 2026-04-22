@@ -6,6 +6,7 @@ from src.probe import Probe
 import httpx
 from datetime import datetime, timezone
 from .checker import is_monitor_due
+from .logger import logger
 
 
 async def worker(client: httpx.AsyncClient):
@@ -51,9 +52,9 @@ async def worker(client: httpx.AsyncClient):
                     await session.commit()
                 await asyncio.sleep(10)
         except asyncio.CancelledError:
-            print("worker shutting down...")
+            logger.info("worker shutting down..")
             raise
 
         except Exception as e:
-            print(f"worker crashed: {e}")
+            logger.error("worker crashed", exc_info=True)
             await asyncio.sleep(5)
