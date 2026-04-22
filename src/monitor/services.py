@@ -6,6 +6,7 @@ from .models import Monitor
 import schemas
 from sqlalchemy import select, desc
 from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
+from src.core.logger import logger
 
 
 class MonitorService:
@@ -13,12 +14,14 @@ class MonitorService:
         self.session = session
 
     async def create_monitor(self, data: schemas.MonitorCreate):
+        logger.info(f"creating monitor for URL: {data.url}")
         normalized_url = data.url
 
         existing = await self.session.execute(
             select(Monitor).where(Monitor.url == normalized_url)
         )
         if existing.scalar_one_or_none():
+            logger.warning(f"Duplicate monitor attempt: {data.url}")
             raise DuplicateMonitorError
 
         payload = data.model_dump()
@@ -39,6 +42,7 @@ class MonitorService:
         statement = await self.session.execute(select(Monitor).where(Monitor.id == id))
         monitor = statement.scalar_one_or_none()
         if monitor is None:
+            logger.info("monitor not found")
             raise MonitorNotFoundError
         return monitor
 
