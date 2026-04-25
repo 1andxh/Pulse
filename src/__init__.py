@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
     client = httpx.AsyncClient()
     app.state.http_client = client
 
-    task = asyncio.create_task(worker(client))
+    task = asyncio.create_task(worker(client, app))
 
     try:
         yield

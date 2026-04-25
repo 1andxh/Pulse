@@ -7,13 +7,16 @@ import httpx
 from datetime import datetime, timezone
 from .checker import is_monitor_due
 from src.core.logger import logger
+from fastapi import FastAPI
 
 
-async def worker(client: httpx.AsyncClient):
+async def worker(client: httpx.AsyncClient, app: FastAPI):
     try:
         while True:
 
             now = datetime.now(timezone.utc)
+
+            app.state.worker_last_seen = now
 
             async with AsyncSessionLocal() as session:
 
