@@ -12,6 +12,7 @@ from .exception_handler import (
 from src.core.worker import worker
 import httpx
 import asyncio
+from src.core.health import health
 
 
 @asynccontextmanager
@@ -50,3 +51,4 @@ app.add_exception_handler(Exception, general_exception_handler)
 
 # routes
 app.include_router(sentry)
+app.include_router(health)
