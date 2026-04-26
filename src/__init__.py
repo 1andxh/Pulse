@@ -37,7 +37,11 @@ async def lifespan(app: FastAPI):
         await engine.dispose()
 
 
-app = FastAPI(title="Pulse Monitor", lifespan=lifespan)
+app = FastAPI(
+    title="Pulse Monitor",
+    lifespan=lifespan,
+    description="Pulse is a lightweight, reliable uptime monitor",
+)
 
 
 @app.get("/")
