@@ -8,25 +8,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
 _service = Annotated[MonitorService, Depends(get_monitor_service)]
-session = Annotated[AsyncSession, Depends(get_session)]
+
 
 monitor_router = APIRouter()
 
 
 @monitor_router.post(
-    "/", response_model=MonitorRead, status_code=status.HTTP_201_CREATED
+    "/", status_code=status.HTTP_201_CREATED, response_model=MonitorRead
 )
 async def create_monitor_route(payload: MonitorCreate, service: _service):
     monitor = await service.create_monitor(payload)
     return monitor
 
 
-@monitor_router.get("/{monitor_monitor_id}", response_model=MonitorRead)
+@monitor_router.get("/{monitor_id}", response_model=MonitorRead)
 async def get_monitor(monitor_id: uuid.UUID, service: _service):
     return await service.get_monitor_by_id(monitor_id)
 
 
-@monitor_router.get("", response_model=list[MonitorRead])
+@monitor_router.get("/", response_model=list[MonitorRead])
 async def list_monitors(service: _service):
     monitors = await service.get_all_monitors()
     return monitors
