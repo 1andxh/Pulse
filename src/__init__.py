@@ -14,6 +14,7 @@ import httpx
 import asyncio
 from src.core.health import health
 from src.monitor.routes import monitor_router
+from src.db.base import Base
 
 
 @asynccontextmanager
