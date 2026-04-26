@@ -3,7 +3,7 @@ from fastapi import status, HTTPException
 from datetime import datetime, timezone
 import uuid
 from .models import Monitor
-import schemas
+from src.monitor.schemas import MonitorCreate, MonitorUpdate
 from sqlalchemy import select, desc
 from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
 from src.core.logger import logger
@@ -13,7 +13,7 @@ class MonitorService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def create_monitor(self, data: schemas.MonitorCreate):
+    async def create_monitor(self, data: MonitorCreate):
         logger.info(f"creating monitor for URL: {data.url}")
         normalized_url = data.url
 
@@ -46,9 +46,7 @@ class MonitorService:
             raise MonitorNotFoundError
         return monitor
 
-    async def update_monitor(
-        self, id: uuid.UUID, data: schemas.MonitorUpdate
-    ) -> Monitor:
+    async def update_monitor(self, id: uuid.UUID, data: MonitorUpdate) -> Monitor:
         monitor = await self.get_monitor_by_id(id)
 
         update_data = data.model_dump(exclude_unset=True)
