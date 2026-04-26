@@ -12,6 +12,7 @@ from .exception_handler import (
 from src.core.worker import worker
 import httpx
 import asyncio
+from src.core.health import health
 
 
 @asynccontextmanager
@@ -19,7 +20,7 @@ async def lifespan(app: FastAPI):
     client = httpx.AsyncClient()
     app.state.http_client = client
 
-    task = asyncio.create_task(worker(client))
+    task = asyncio.create_task(worker(client, app))
 
     try:
         yield
@@ -50,3 +51,4 @@ app.add_exception_handler(Exception, general_exception_handler)
 
 # routes
 app.include_router(sentry)
+app.include_router(health)
