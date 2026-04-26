@@ -33,6 +33,8 @@ class MonitorService:
         await self.session.commit()
         await self.session.refresh(new_monitor)
 
+        return new_monitor
+
     async def get_all_monitors(self) -> list[Monitor]:
         stmt = select(Monitor).order_by(desc(Monitor.created_at))
         result = await self.session.execute(stmt)
@@ -61,3 +63,4 @@ class MonitorService:
         monitor = await self.get_monitor_by_id(monitor_id)
         await self.session.delete(monitor)
         await self.session.commit()
+        return
