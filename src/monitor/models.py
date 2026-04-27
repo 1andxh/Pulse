@@ -50,5 +50,8 @@ class Monitor(Base):
     )
     # relationships
     probes: Mapped[list["Probe"]] = relationship(
-        "Probe", back_populates="monitor", cascade="all, delete-orphan"
+        "Probe",
+        back_populates="monitor",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
