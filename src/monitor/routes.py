@@ -32,7 +32,7 @@ async def list_monitors(service: _service):
     return monitors
 
 
-@monitor_router.patch("/{monitor_monitor_id}", response_model=MonitorRead)
+@monitor_router.patch("/{monitor_id}", response_model=MonitorRead)
 async def update_monitor(
     monitor_id: uuid.UUID,
     payload: MonitorUpdate,
@@ -41,6 +41,6 @@ async def update_monitor(
     return await service.update_monitor(monitor_id, payload)
 
 
-@monitor_router.delete("/{monitor_monitor_id}", status_code=status.HTTP_204_NO_CONTENT)
+@monitor_router.delete("/{monitor_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_monitor(monitor_id: uuid.UUID, service: _service):
     return await service.delete_monitor(monitor_id)
