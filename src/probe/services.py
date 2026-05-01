@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
-from src.monitor.models import Probe
+from src.probe.models import Probe
 from sqlalchemy import select, desc
 from fastapi import HTTPException, status
 
