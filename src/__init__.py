@@ -15,6 +15,7 @@ import asyncio
 from src.core.health import health
 from src.monitor.routes import monitor_router
 from src.db.base import Base
+from src.probe.routes import probe_router
 
 
 @asynccontextmanager
@@ -59,3 +60,4 @@ app.add_exception_handler(Exception, general_exception_handler)
 app.include_router(sentry, tags=["logs"])
 app.include_router(health, tags=["health-checks"])
 app.include_router(monitor_router, tags=["monitors"])
+app.include_router(probe_router, tags=["dashboard"], prefix="/dashboard")
