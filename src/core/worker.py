@@ -57,7 +57,7 @@ async def worker(client: httpx.AsyncClient, app: FastAPI):
                 await session.commit()
                 logger.info(f"Successfully processed {len(due_monitors)} probes")
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(1)
     except asyncio.CancelledError:
         logger.info("worker shutting down..")
         raise
