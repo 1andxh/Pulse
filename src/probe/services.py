@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 from src.monitor.models import Probe
 from sqlalchemy import select, desc
+from fastapi import HTTPException, status
 
 
 class ProbeService:
@@ -16,4 +17,13 @@ class ProbeService:
             .limit(limit)
         )
         probes = stmt.scalars().all()
-        return probes
+        if not probes:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No probe data found for this monitor",
+            )
+        return {
+            "monitor_id": monitor_id,
+            "latest_status": probes[0].is_up,
+            "history": probes,
+        }
