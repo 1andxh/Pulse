@@ -25,3 +25,15 @@ async def test_create_monitor_api(db_session, client):
     assert data["url"] == "https://example.com"
     assert data["name"] == "Test Monitor"
     assert "id" in data
+
+
+@pytest.mark.asyncio
+async def test_monitor_duplicate(db_session, client):
+    response = await client.post(
+        "/",
+        json={
+            "name": "Test Monitor",
+            "url": "https://example.com",
+            "check_interval": 10,
+        },
+    )
