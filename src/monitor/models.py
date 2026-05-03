@@ -15,7 +15,6 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from datetime import datetime, timezone
 
-
 if TYPE_CHECKING:
     from src.probe.models import Probe
 
@@ -38,7 +37,7 @@ class Monitor(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     url: Mapped[str] = mapped_column(String(1024), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    check_interval: Mapped[int] = mapped_column(default=30)
+    check_interval: Mapped[int] = mapped_column(server_default="30")
     last_checked_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
