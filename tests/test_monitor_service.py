@@ -1,5 +1,4 @@
 import pytest
-from tests.test_database import db_session
 from src.monitor.services import MonitorService
 from src.monitor.schemas import MonitorCreate
 from src.exceptions import DuplicateMonitorError
