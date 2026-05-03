@@ -17,8 +17,8 @@ async def pulse_exception_handler(request: Request, exc: Exception):
 async def validation_exception_handler(request: Request, exc: Exception):
     if isinstance(exc, RequestValidationError):
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content={"error": "ValidationError", "message": exc.errors()},
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            content={"error": "ValidationError", "message": str(exc.errors())},
         )
     return await general_exception_handler(request, exc)
 
