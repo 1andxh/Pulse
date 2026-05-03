@@ -59,11 +59,11 @@ async def test_create_monitor_race_condition(db_session, client):
     )
 
     success = [
-        r for r in responses if hasattr(r, "status_code") and r.status_code == 201
+        r for r in responses if hasattr(r, "status_code") and r.status_code == 201  # type: ignore
     ]
 
     failures = [
-        r for r in responses if hasattr(r, "status_code") and r.status_code != 201
+        r for r in responses if hasattr(r, "status_code") and r.status_code != 201  # type: ignore
     ]
 
     assert len(success) <= 1, f"Expected success, got {len(success)}"
