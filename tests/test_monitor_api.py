@@ -9,7 +9,7 @@ from src import app
 async def test_create_monitor_api(db_session, client):
 
     response = await client.post(
-        "/",
+        "/monitors/",
         json={
             "name": "Test Monitor",
             "url": "https://example.com",
@@ -36,10 +36,10 @@ async def test_create_monitor_duplicate(db_session, client):
         "url": "https://example.com",
         "check_interval": 10,
     }
-    response1 = await client.post("/", json=payload)
+    response1 = await client.post("/monitors/", json=payload)
     assert response1.status_code == 201
 
-    response2 = await client.post("/", json=payload)
+    response2 = await client.post("/monitors/", json=payload)
     assert response2.status_code == 409
 
 
@@ -47,12 +47,12 @@ async def test_create_monitor_duplicate(db_session, client):
 async def test_create_monitor_race_condition(db_session, client):
     payload = {
         "name": "Test-race-Monitor",
-        "url": "https://example.com",
+        "url": "https://example-race.com",
         "check_interval": 30,
     }
 
     async def send_request():
-        return await client.post("/", json=payload)
+        return await client.post("/monitors/", json=payload)
 
     responses = await asyncio.gather(
         send_request(), send_request(), return_exceptions=True
@@ -66,5 +66,23 @@ async def test_create_monitor_race_condition(db_session, client):
         r for r in responses if hasattr(r, "status_code") and r.status_code != 201  # type: ignore
     ]
 
-    assert len(success) <= 1, f"Expected success, got {len(success)}"
-    assert len(failures) == 1, f"Expected 1 failure, got {len(failures)}"
+    assert len(success) <= 1, f"at least on success on request"
+    assert len(failures) == 1
+
+    result = await db_session.execute(select(Monitor))
+    monitors = result.scalars().all()
+
+    assert len(monitors) == 1
+
+
+@pytest.mark.asyncio
+async def test_create_monitor_invalid_url(client):
+    response = await client.post(
+        "/monitors/",
+        json={
+            "name": "Test Monitor",
+            "url": "http://example.com",
+            "check_interval": 10,
+        },
+    )
+    assert response.status_code == 422
