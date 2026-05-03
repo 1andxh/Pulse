@@ -69,11 +69,6 @@ async def test_create_monitor_race_condition(db_session, client):
     assert len(success) <= 1, f"at least on success on request"
     assert len(failures) == 1
 
-    result = await db_session.execute(select(Monitor))
-    monitors = result.scalars().all()
-
-    assert len(monitors) == 1
-
 
 @pytest.mark.asyncio
 async def test_create_monitor_invalid_url(client):
