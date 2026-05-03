@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-echo "checking database migrations..."
+echo "Running migrations..."
 uv run alembic upgrade head
 
-echo "starting Pulse..."
+echo "Starting Pulse API..."
 exec uvicorn src:app --host 0.0.0.0 --port 8000 --workers 1
-
-
-echo "_______________________________________"
