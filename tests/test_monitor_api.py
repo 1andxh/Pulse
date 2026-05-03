@@ -3,10 +3,12 @@ from httpx import AsyncClient, ASGITransport
 from src.db.session import get_session
 from src import app
 from tests.test_database import db_session
+from sqlalchemy import select
+from src.monitor.models import Monitor
 
 
 @pytest.mark.asyncio
-async def test_create_monitor_Api(db_session):
+async def test_create_monitor_api(db_session):
     async def override_get_session():
         yield db_session
 
@@ -23,6 +25,11 @@ async def test_create_monitor_Api(db_session):
                 "check_interval": 10,
             },
         )
+
+        result = await db_session.execute(select(Monitor))
+        monitors = result.scalars().all()
+
+        assert len(monitors) == 1
         assert response.status_code == 201
 
         data = response.json()
