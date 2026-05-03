@@ -7,6 +7,7 @@ from src.monitor.schemas import MonitorCreate, MonitorUpdate
 from sqlalchemy import select, desc
 from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
 from src.core.logger import logger
+from sqlalchemy.exc import IntegrityError
 
 
 class MonitorService:
@@ -29,11 +30,15 @@ class MonitorService:
 
         new_monitor = Monitor(**payload)
 
-        self.session.add(new_monitor)
-        await self.session.commit()
-        await self.session.refresh(new_monitor)
+        try:
+            self.session.add(new_monitor)
+            await self.session.commit()
+            await self.session.refresh(new_monitor)
+            return new_monitor
 
-        return new_monitor
+        except IntegrityError:
+            await self.session.rollback()
+            raise DuplicateMonitorError
 
     async def get_all_monitors(self) -> list[Monitor]:
         stmt = select(Monitor).order_by(desc(Monitor.created_at))
