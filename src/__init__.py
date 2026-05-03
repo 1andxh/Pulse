@@ -59,5 +59,5 @@ app.add_exception_handler(Exception, general_exception_handler)
 # routes
 app.include_router(sentry, tags=["logs"])
 app.include_router(health, tags=["health-checks"])
-app.include_router(monitor_router, tags=["monitors"])
+app.include_router(monitor_router, tags=["monitors"], prefix="/monitors")
 app.include_router(probe_router, tags=["dashboard"], prefix="/dashboard")
