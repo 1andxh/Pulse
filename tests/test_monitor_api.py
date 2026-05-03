@@ -1,40 +1,27 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
-from src.db.session import get_session
-from src import app
-from tests.test_database import db_session
 from sqlalchemy import select
 from src.monitor.models import Monitor
 
 
 @pytest.mark.asyncio
-async def test_create_monitor_api(db_session):
-    async def override_get_session():
-        yield db_session
+async def test_create_monitor_api(db_session, client):
 
-    app.dependency_overrides[get_session] = override_get_session
+    response = await client.post(
+        "/",
+        json={
+            "name": "Test Monitor",
+            "url": "https://example.com",
+            "check_interval": 10,
+        },
+    )
 
-    transport = ASGITransport(app=app)
+    result = await db_session.execute(select(Monitor))
+    monitors = result.scalars().all()
 
-    async with AsyncClient(transport=transport, base_url="http://test/") as client:
-        response = await client.post(
-            "/",
-            json={
-                "name": "Test Monitor",
-                "url": "https://example.com",
-                "check_interval": 10,
-            },
-        )
+    assert len(monitors) == 1
+    assert response.status_code == 201
 
-        result = await db_session.execute(select(Monitor))
-        monitors = result.scalars().all()
-
-        assert len(monitors) == 1
-        assert response.status_code == 201
-
-        data = response.json()
-        assert data["url"] == "https://example.com"
-        assert data["name"] == "Test Monitor"
-        assert "id" in data
-
-        app.dependency_overrides.clear()
+    data = response.json()
+    assert data["url"] == "https://example.com"
+    assert data["name"] == "Test Monitor"
+    assert "id" in data
