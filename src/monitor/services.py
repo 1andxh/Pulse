@@ -16,19 +16,7 @@ class MonitorService:
 
     async def create_monitor(self, data: MonitorCreate):
         logger.info(f"creating monitor for URL: {data.url}")
-        normalized_url = data.url
-
-        existing = await self.session.execute(
-            select(Monitor).where(Monitor.url == normalized_url)
-        )
-        if existing.scalar_one_or_none():
-            logger.warning(f"Duplicate monitor attempt: {data.url}")
-            raise DuplicateMonitorError
-
-        payload = data.model_dump()
-        payload["url"] = normalized_url
-
-        new_monitor = Monitor(**payload)
+        new_monitor = Monitor(**data.model_dump())
 
         try:
             self.session.add(new_monitor)
@@ -38,6 +26,7 @@ class MonitorService:
 
         except IntegrityError:
             await self.session.rollback()
+            logger.warning(f"Duplicate monitor attempt: {data.url}")
             raise DuplicateMonitorError
 
     async def get_all_monitors(self) -> list[Monitor]:
