@@ -19,4 +19,4 @@ async def _get_probe_service(
 async def get_probe_history(
     monitor_id: uuid.UUID, service: Annotated[ProbeService, Depends(_get_probe_service)]
 ):
-    return service.get_latest_probes(monitor_id)
+    return await service.get_latest_probes(monitor_id)
