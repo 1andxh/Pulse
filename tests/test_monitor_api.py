@@ -81,3 +81,12 @@ async def test_create_monitor_invalid_url(client):
         },
     )
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_list_monitors(client):
+    await client.post("/monitors/", json={})
+
+    response = await client.get("/monitors/")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
