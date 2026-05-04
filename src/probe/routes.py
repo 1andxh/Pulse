@@ -15,7 +15,7 @@ async def _get_probe_service(
     return ProbeService(session)
 
 
-@probe_router.get("stats/{monitor_id}", response_model=list[ProbeRead])
+@probe_router.get("/{monitor_id}/", response_model=list[ProbeRead])
 async def get_probe_history(
     monitor_id: uuid.UUID, service: Annotated[ProbeService, Depends(_get_probe_service)]
 ):
