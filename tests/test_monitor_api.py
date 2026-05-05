@@ -58,12 +58,6 @@ async def test_create_monitor_race_condition(db_session, client):
         send_request(), send_request(), return_exceptions=True
     )
 
-    # success = [
-    #     r for r in responses if hasattr(r, "status_code") and r.status_code == 201  # type: ignore
-    # ]
-
-    # assert len(success) >= 1, f"at least on success on request"
-
     result = await db_session.execute(select(Monitor))
     monitors = result.scalars().all()
 
