@@ -13,3 +13,11 @@ class ProbeRead(BaseModel):
     error_message: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ProbeHistoryResponse(BaseModel):
+    monitor_id: uuid.UUID
+    latest_status: bool
+    history: list[ProbeRead]
+
+    model_config = ConfigDict(from_attributes=True)
