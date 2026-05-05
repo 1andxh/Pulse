@@ -1,25 +1,25 @@
+import asyncio
+from datetime import datetime, timezone
+
+import httpx
+from fastapi import FastAPI
+
+from src.core.logger import logger
 from src.db.session import AsyncSessionLocal
 from src.monitor.services import MonitorService
-from .checker import check_monitor, CheckResult
-import asyncio
 from src.probe import Probe
-import httpx
-from datetime import datetime, timezone
-from .checker import is_monitor_due
-from src.core.logger import logger
-from fastapi import FastAPI
+
+from .checker import CheckResult, check_monitor, is_monitor_due
 
 
 async def worker(client: httpx.AsyncClient, app: FastAPI):
     try:
         while True:
-
             now = datetime.now(timezone.utc)
 
             app.state.worker_last_seen = now
 
             async with AsyncSessionLocal() as session:
-
                 service = MonitorService(session)
                 monitors = await service.get_all_monitors()
 
@@ -27,7 +27,7 @@ async def worker(client: httpx.AsyncClient, app: FastAPI):
                     monitor for monitor in monitors if is_monitor_due(monitor, now)
                 ]
                 if not due_monitors:
-                    logger.debug(f"no monitors due, skipping check cycle")
+                    logger.debug("no monitors due, skipping check cycle")
 
                     await asyncio.sleep(3)
                     continue
@@ -62,6 +62,6 @@ async def worker(client: httpx.AsyncClient, app: FastAPI):
         logger.info("worker shutting down..")
         raise
 
-    except Exception as e:
+    except Exception:
         logger.error("worker crashed", exc_info=True)
         await asyncio.sleep(5)

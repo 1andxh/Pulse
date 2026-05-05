@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Request
 from datetime import datetime, timezone
-from sqlalchemy import select
-from src.db.session import AsyncSessionLocal
-from src.core.logger import logger
+
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+from sqlalchemy import select
+
+from src.core.logger import logger
+from src.db.session import AsyncSessionLocal
 
 health = APIRouter()
 

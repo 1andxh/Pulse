@@ -1,11 +1,12 @@
 import logging
 import sys
-import sentry_sdk
-from src.config import settings
+from logging.handlers import RotatingFileHandler
 
+import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
-from logging.handlers import RotatingFileHandler
+
+from src.config import settings
 
 
 def custom_logger():

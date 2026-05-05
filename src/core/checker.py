@@ -1,10 +1,10 @@
-from dataclasses import dataclass
 import time
-import httpx
-from src.monitor import Monitor
-from src.probe import Probe
-import asyncio
+from dataclasses import dataclass
 from datetime import datetime
+
+import httpx
+
+from src.monitor import Monitor
 
 
 @dataclass
