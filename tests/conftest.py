@@ -6,7 +6,7 @@ from src import app
 from src.db.base import Base
 from src.db.session import get_session
 
-DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+DATABASE_URL = "sqlite+aiosqlite:///.test.db"
 
 engine = create_async_engine(url=DATABASE_URL, echo=False)
 
@@ -16,23 +16,27 @@ TestingSessionLocal = async_sessionmaker(
 )
 
 
-@pytest_asyncio.fixture()
-async def db_session():
-
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    async with TestingSessionLocal() as session:
-        yield session
+    yield
 
-    await engine.dispose()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest_asyncio.fixture()
-async def override_get_session():
+async def db_session():
+    async with TestingSessionLocal() as session:
+        yield session
+
+
+@pytest_asyncio.fixture()
+async def override_get_session(db_session):
     async def _override():
-        async with TestingSessionLocal() as session:
-            yield session
+        yield db_session
 
     app.dependency_overrides[get_session] = _override
     yield
