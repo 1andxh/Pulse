@@ -1,8 +1,9 @@
+import asyncio
+
 import pytest
 from sqlalchemy import select
+
 from src.monitor.models import Monitor
-import asyncio
-from src import app
 
 
 @pytest.mark.asyncio
@@ -54,9 +55,7 @@ async def test_create_monitor_race_condition(db_session, client):
     async def send_request():
         return await client.post("/monitors/", json=payload)
 
-    responses = await asyncio.gather(
-        send_request(), send_request(), return_exceptions=True
-    )
+    await asyncio.gather(send_request(), send_request(), return_exceptions=True)
 
     result = await db_session.execute(select(Monitor))
     monitors = result.scalars().all()

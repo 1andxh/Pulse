@@ -1,6 +1,6 @@
-from datetime import datetime, UTC, timedelta
+from datetime import UTC, datetime, timedelta
+
 from src.core.checker import is_monitor_due
-import pytest
 
 
 class DummyMonitor:
@@ -14,7 +14,6 @@ NOW = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
 
 
 class TestMonitorScheduler:
-
     def test_monitor_never_checked_is_due(self):
         monitor = DummyMonitor(is_active=True, last_checked_at=None, check_interval=30)
         assert is_monitor_due(monitor, NOW) is True

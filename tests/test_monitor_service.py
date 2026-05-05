@@ -1,7 +1,8 @@
 import pytest
-from src.monitor.services import MonitorService
-from src.monitor.schemas import MonitorCreate
+
 from src.exceptions import DuplicateMonitorError
+from src.monitor.schemas import MonitorCreate
+from src.monitor.services import MonitorService
 
 
 @pytest.mark.asyncio
