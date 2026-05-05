@@ -62,12 +62,12 @@ async def test_create_monitor_race_condition(db_session, client):
         r for r in responses if hasattr(r, "status_code") and r.status_code == 201  # type: ignore
     ]
 
-    failures = [
-        r for r in responses if hasattr(r, "status_code") and r.status_code != 201  # type: ignore
-    ]
+    assert len(success) >= 1, f"at least on success on request"
 
-    assert len(success) <= 1, f"at least on success on request"
-    assert len(failures) == 1
+    result = await db_session.execute(select(Monitor))
+    monitors = result.scalars().all()
+
+    assert len(monitors) == 1
 
 
 @pytest.mark.asyncio
