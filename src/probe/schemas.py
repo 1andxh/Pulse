@@ -10,7 +10,7 @@ class ProbeRead(BaseModel):
     timestamp: datetime
     is_up: bool
     latency_ms: float
-    error_message: str
+    error_message: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
