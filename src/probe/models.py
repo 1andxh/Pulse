@@ -1,16 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import ForeignKey, DateTime, String, func, Boolean, Index
-from src.db.base import Base
+
 import uuid
+from datetime import datetime
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String, func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from datetime import datetime, timezone
-
+from src.db.base import Base
 
 if TYPE_CHECKING:
-
     from src.monitor.models import Monitor
 
 

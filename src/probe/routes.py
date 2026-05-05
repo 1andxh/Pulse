@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends
-from .schemas import ProbeRead
 import uuid
 from typing import Annotated
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from ..db.session import get_session
+from .schemas import ProbeRead
 from .services import ProbeService
 
 probe_router = APIRouter()
