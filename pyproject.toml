@@ -24,15 +24,12 @@ dev = [
 
 
 [tool.ruff]
-# The version of Python you are using
 target-version = "py313"
 line-length = 88
 
 [tool.ruff.lint]
-# Enable specific rules (E = Error, F = Pyflakes, I = Import sorting)
 select = ["E", "F", "I"]
 ignore = []
 
 [tool.ruff.format]
-# Use double quotes, which is standard for FastAPI/Black style
 quote-style = "double"
