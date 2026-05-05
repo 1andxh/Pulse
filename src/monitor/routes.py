@@ -1,11 +1,11 @@
-from fastapi import APIRouter, status, Depends
-from typing import Annotated
-from .schemas import MonitorRead, MonitorCreate, MonitorUpdate
-from .services import MonitorService
-from .dependency import get_monitor_service
-from src.db.session import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status
+
+from .dependency import get_monitor_service
+from .schemas import MonitorCreate, MonitorRead, MonitorUpdate
+from .services import MonitorService
 
 _service = Annotated[MonitorService, Depends(get_monitor_service)]
 

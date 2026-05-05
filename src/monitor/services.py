@@ -1,13 +1,14 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import status, HTTPException
-from datetime import datetime, timezone
 import uuid
-from .models import Monitor
-from src.monitor.schemas import MonitorCreate, MonitorUpdate
-from sqlalchemy import select, desc
-from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
-from src.core.logger import logger
+
+from sqlalchemy import desc, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.logger import logger
+from src.monitor.schemas import MonitorCreate, MonitorUpdate
+
+from ..exceptions import DuplicateMonitorError, MonitorNotFoundError
+from .models import Monitor
 
 
 class MonitorService:

@@ -1,9 +1,8 @@
-from typing import Any
-from typing_extensions import Self
-from pydantic import BaseModel, HttpUrl, field_validator, ConfigDict, Field
 import uuid
-from urllib.parse import urlparse, urlunparse
 from datetime import datetime
+from urllib.parse import urlparse, urlunparse
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def normalize_url(v: str | None) -> str | None:
