@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
 from typing import Annotated
+
+from fastapi import APIRouter, Depends
+
+from src.dashboard.dependency import get_dashboard_service
 from src.dashboard.schemas import DashboardStats
 from src.dashboard.services import DashboardService
-from src.dashboard.dependency import get_dashboard_service
 
 dashboard_router = APIRouter()
 

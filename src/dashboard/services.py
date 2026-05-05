@@ -1,7 +1,9 @@
-from sqlalchemy import select, func, Integer, cast
+from sqlalchemy import Integer, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.monitor.models import Monitor
 from src.probe.models import Probe
+
 from .schemas import DashboardStats
 
 
