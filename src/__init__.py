@@ -46,6 +46,7 @@ app = FastAPI(
     title="Pulse Monitor",
     lifespan=lifespan,
     description="Pulse is a lightweight, reliable uptime monitor",
+    openapi_url="/docs/openapi.json",
 )
 
 
