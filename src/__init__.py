@@ -27,6 +27,8 @@ from .exception_handler import (
 )
 from .middleware import register_middleware
 
+from src.config import settings
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -54,6 +56,19 @@ app = FastAPI(
     description="A lightweight, reliable uptime monitor",
     openapi_url="/docs/openapi.json",
 )
+
+
+@app.get("/degug-mail")
+async def debug_mail():
+    return {
+        "server": settings.mail_server,
+        "port": settings.mail_port,
+        "starttls": settings.mail_starttls,
+        "ssl_tls": settings.mail_ssl_tls,
+        "from": settings.mail_from,
+        "username": settings.mail_username,
+    }
+
 
 # exceptions
 app.add_exception_handler(PulseError, pulse_exception_handler)

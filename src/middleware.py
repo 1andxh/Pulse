@@ -26,10 +26,10 @@ def register_middleware(app: FastAPI):
         allow_headers=["*"],
     )
 
-    app.add_middleware(
-        TrustedHostMiddleware,
-        allowed_hosts=["localhost", "127.0.0.1", _host_from_url(settings.api_url)],
-    )
+    # app.add_middleware(
+    #     TrustedHostMiddleware,
+    #     allowed_hosts=["localhost", "127.0.0.1", _host_from_url(settings.api_url)],
+    # )
 
     app.add_middleware(
         SessionMiddleware,
