@@ -5,6 +5,7 @@ import httpx
 from fastapi import FastAPI
 
 from src.auth.routes import auth_router
+from src.config import settings
 from src.core.health import health
 
 # from src.core.sentry import sentry
@@ -54,6 +55,19 @@ app = FastAPI(
     description="A lightweight, reliable uptime monitor",
     openapi_url="/docs/openapi.json",
 )
+
+
+@app.get("/degug-mail")
+async def debug_mail():
+    return {
+        "server": settings.mail_server,
+        "port": settings.mail_port,
+        "starttls": settings.mail_starttls,
+        "ssl_tls": settings.mail_ssl_tls,
+        "from": settings.mail_from,
+        "username": settings.mail_username,
+    }
+
 
 # exceptions
 app.add_exception_handler(PulseError, pulse_exception_handler)
