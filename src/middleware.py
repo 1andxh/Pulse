@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.middleware.trustedhost import TrustedHostMiddleware
+
 
 from src.config import settings
 
@@ -25,11 +25,6 @@ def register_middleware(app: FastAPI):
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    # app.add_middleware(
-    #     TrustedHostMiddleware,
-    #     allowed_hosts=["localhost", "127.0.0.1", _host_from_url(settings.api_url)],
-    # )
 
     app.add_middleware(
         SessionMiddleware,
