@@ -5,6 +5,7 @@ import httpx
 from fastapi import FastAPI
 
 from src.auth.routes import auth_router
+from src.config import settings
 from src.core.health import health
 
 # from src.core.sentry import sentry
@@ -26,8 +27,6 @@ from .exception_handler import (
     validation_exception_handler,
 )
 from .middleware import register_middleware
-
-from src.config import settings
 
 
 @asynccontextmanager
